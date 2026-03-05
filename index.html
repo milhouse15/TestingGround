@@ -9,21 +9,21 @@
 <style>
 
 body{
-background:#0f1114;
-font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+background:#111316;
 color:#f4efe6;
-margin:0;
+font-family:-apple-system,BlinkMacSystemFont,sans-serif;
 display:flex;
 justify-content:center;
 padding:20px;
+margin:0;
 }
 
-.container{
-border:2px solid #ffffff;
-border-radius:14px;
-padding:14px;
-background:#14171c;
-max-width:1000px;
+.frame{
+border:2px solid #fff;
+border-radius:12px;
+padding:12px;
+background:#181b20;
+max-width:900px;
 width:100%;
 }
 
@@ -31,20 +31,17 @@ width:100%;
 display:flex;
 justify-content:space-between;
 align-items:center;
-margin-bottom:10px;
-}
-
-.header-title{
-font-size:22px;
+margin-bottom:8px;
+font-size:20px;
 font-weight:600;
 }
 
 button{
 background:#2d6cdf;
 border:none;
-color:white;
-padding:8px 10px;
+padding:6px 10px;
 border-radius:6px;
+color:white;
 font-size:14px;
 }
 
@@ -54,13 +51,8 @@ border-collapse:collapse;
 text-align:center;
 }
 
-th{
+th,td{
 padding:6px;
-font-weight:600;
-}
-
-td{
-padding:4px;
 }
 
 input{
@@ -75,8 +67,8 @@ font-size:16px;
 }
 
 .total-row td{
-padding-top:10px;
 font-weight:600;
+padding-top:10px;
 }
 
 .week-total{
@@ -91,17 +83,11 @@ font-size:18px;
 display:flex;
 justify-content:center;
 gap:10px;
-margin-top:14px;
+margin-top:12px;
 }
 
 .extra{
 display:none;
-}
-
-.add-row{
-font-size:12px;
-background:#444;
-padding:3px 6px;
 }
 
 </style>
@@ -109,16 +95,11 @@ padding:3px 6px;
 
 <body>
 
-<div class="container">
+<div class="frame">
 
 <div class="header">
-
-<div class="header-title" id="weekLabel">
-Timecard — Week of
-</div>
-
+<div>Timecard</div>
 <button onclick="exportCSV()">Export CSV</button>
-
 </div>
 
 <table id="timeTable">
@@ -138,7 +119,6 @@ Timecard — Week of
 <tbody id="tableBody"></tbody>
 
 <tfoot>
-
 <tr class="total-row">
 <td>Total</td>
 <td id="total-0">0</td>
@@ -148,7 +128,6 @@ Timecard — Week of
 <td id="total-4">0</td>
 <td id="total-5">0</td>
 </tr>
-
 </tfoot>
 
 </table>
@@ -159,10 +138,8 @@ Timecard — Week of
 </div>
 
 <div class="controls">
-
 <button onclick="clockIn()">Clock In</button>
 <button onclick="clockOut()">Clock Out</button>
-
 </div>
 
 </div>
@@ -184,9 +161,8 @@ if(r>2) tr.classList.add("extra")
 
 let label=document.createElement("td")
 
-if(r===0) label.innerHTML="In"
-else if(r===1) label.innerHTML="Out"
-else label.innerHTML=""
+if(r%2==0) label.innerText="In"
+else label.innerText="Out"
 
 tr.appendChild(label)
 
@@ -198,12 +174,9 @@ let input=document.createElement("input")
 
 input.classList.add("time-input")
 input.dataset.day=d
-
 input.setAttribute("inputmode","numeric")
 
 input.addEventListener("blur",formatInput)
-
-input.addEventListener("keydown",nav)
 
 td.appendChild(input)
 
@@ -262,7 +235,6 @@ let total=0
 for(let i=0;i<inputs.length;i+=2){
 
 let a=parse(inputs[i]?.value)
-
 let b=parse(inputs[i+1]?.value)
 
 if(a!=null && b!=null){
@@ -289,41 +261,6 @@ document.getElementById("weekTotal").innerText=week.toFixed(2)
 
 }
 
-function nav(e){
-
-let td=e.target.parentElement
-let tr=td.parentElement
-
-let col=td.cellIndex
-
-if(e.key==="ArrowDown"||e.key==="Tab"){
-
-e.preventDefault()
-
-let next=tr.nextElementSibling
-
-if(next){
-let input=next.children[col].querySelector("input")
-if(input)input.focus()
-}
-
-}
-
-if(e.key==="ArrowUp"){
-
-e.preventDefault()
-
-let prev=tr.previousElementSibling
-
-if(prev){
-let input=prev.children[col].querySelector("input")
-if(input)input.focus()
-}
-
-}
-
-}
-
 function nowTime(){
 
 let d=new Date()
@@ -344,8 +281,8 @@ for(let i=0;i<inputs.length;i+=2){
 if(!inputs[i].value){
 
 inputs[i].value=nowTime()
-
 break
+
 }
 
 }
@@ -363,8 +300,8 @@ for(let i=1;i<inputs.length;i+=2){
 if(!inputs[i].value){
 
 inputs[i].value=nowTime()
-
 break
+
 }
 
 }
@@ -425,8 +362,54 @@ a.click()
 
 buildTable()
 
+
+/* ---------- FIX #1: DOWN ARROW MOVES DOWN ---------- */
+
+document.addEventListener("keydown",function(e){
+
+if(e.key!=="ArrowDown") return
+
+const active=document.activeElement
+
+if(!active.classList.contains("time-input")) return
+
+e.preventDefault()
+
+const td=active.closest("td")
+const tr=active.closest("tr")
+
+const col=td.cellIndex
+
+const nextRow=tr.nextElementSibling
+
+if(!nextRow) return
+
+const nextInput=nextRow.cells[col]?.querySelector("input")
+
+if(nextInput) nextInput.focus()
+
+})
+
+
+/* ---------- FIX #2: HIDDEN ROWS KEEP DATA ---------- */
+
+function toggleExtraRows(dayIndex){
+
+const rows=document.querySelectorAll(".extra-row-"+dayIndex)
+
+rows.forEach(row=>{
+
+if(row.style.display==="table-row"){
+row.style.display="none"
+}else{
+row.style.display="table-row"
+}
+
+})
+
+}
+
 </script>
 
 </body>
 </html>
-  
