@@ -33,7 +33,7 @@ body{
   color:#fff;
   padding:16px 15px;
   font-weight:700;
-  font-size:18px;
+  font-size:20px;
   display:flex;
   justify-content:space-between;
   align-items:center;
@@ -269,27 +269,115 @@ function clockAuto(){
 
 // Week storage
 function weekKey(){ let d=new Date(); d.setDate(d.getDate()-(d.getDay()+6)%7); d.setDate(d.getDate()+weekOffset*7); return "week_"+d.toISOString().slice(0,10); }
-function save(){ let data=[]; document.querySelectorAll("input").forEach(i=>data.push(i.value)); localStorage.setItem(weekKey(), JSON.stringify(data)); }
-function load(){ const data=JSON.parse(localStorage.getItem(weekKey())||"[]"); document.querySelectorAll("input").forEach((i,x)=>i.value=data[x]||""); updateWeekLabel(); calc(); }
+
+// Save all inputs
+function save(){ 
+  const data = [];
+  document.querySelectorAll("input").forEach(i => data.push(i.value));
+  localStorage.setItem(weekKey(), JSON.stringify(data));
+}
+
+// Load all inputs (dynamic rows restored)
+function load(){ 
+  const saved = JSON.parse(localStorage.getItem(weekKey()) || "[]");
+  const body = document.getElementById("body");
+  body.innerHTML = ""; 
+
+  const numRows = Math.max(initialRows, Math.ceil(saved.length / days));
+
+  for(let r = 0; r < numRows; r++){
+    let trIn = document.createElement("tr");
+    let trOut = document.createElement("tr");
+    let labelIn = document.createElement("td"); labelIn.innerText = "In"; trIn.appendChild(labelIn);
+    let labelOut = document.createElement("td"); labelOut.innerText = "Out"; trOut.appendChild(labelOut);
+
+    for(let d = 0; d < days; d++){
+      let inCell = document.createElement("td");
+      let outCell = document.createElement("td");
+
+      let inInput = document.createElement("input");
+      let outInput = document.createElement("input");
+      inInput.type = outInput.type = "tel";
+      inInput.inputMode = outInput.inputMode = "numeric";
+      inInput.pattern = outInput.pattern = "[0-9]*";
+      inInput.dataset.r = outInput.dataset.r = r;
+      inInput.dataset.d = outInput.dataset.d = d;
+
+      const idxIn = r*days + d;
+      const idxOut = idxIn + days;
+      if(saved[idxIn] !== undefined) inInput.value = saved[idxIn];
+      if(saved[idxOut] !== undefined) outInput.value = saved[idxOut];
+
+      inInput.addEventListener("change",()=>{save();calc();});
+      inInput.addEventListener("blur",()=>{autoFormat(inInput);});
+      outInput.addEventListener("change",()=>{save();calc();});
+      outInput.addEventListener("blur",()=>{autoFormat(outInput);});
+
+      inCell.appendChild(inInput); outCell.appendChild(outInput);
+      trIn.appendChild(inCell); trOut.appendChild(outCell);
+    }
+    body.appendChild(trIn); body.appendChild(trOut);
+  }
+
+  updateWeekLabel();
+  calc();
+}
+
+// Update week label
+function updateWeekLabel(){
+  let d = new Date();
+  d.setDate(d.getDate()-(d.getDay()+6)%7 + weekOffset*7);
+  document.getElementById("weekLabel").innerText=`Timecard: Week of ${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+}
+
+// CSV export
+function exportCSV(){
+  const table = document.getElementById("table");
+  const rows = [];
+  table.querySelectorAll("tbody tr").forEach(tr=>{
+    const row=[];
+    tr.querySelectorAll("td").forEach(td=>{
+      const input = td.querySelector("input");
+      row.push(input ? input.value : td.innerText);
+    });
+    rows.push(row.join(","));
+  });
+  const totalRow = ["Total"];
+  for(let d=0; d<6; d++){
+    const t = document.getElementById("t"+d).innerText.replace(/\n.*/,"");
+    totalRow.push(t);
+  }
+  rows.push(totalRow.join(","));
+  let d = new Date();
+  d.setDate(d.getDate()-(d.getDay()+6)%7);
+  const filename = `timecard_${d.toISOString().slice(0,10)}.csv`;
+  const blob = new Blob([rows.join("\n")], {type:"text/csv"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+}
 
 // Swipe detection
 let startX=null;
 document.addEventListener("touchstart", e=>startX=e.touches[0].clientX);
-document.addEventListener("touchend", e=>{ let dx=e.changedTouches[0].clientX-startX; if(dx>80) weekOffset--; if(dx<-80) weekOffset++; load(); });
+document.addEventListener("touchend", e=>{
+  let dx=e.changedTouches[0].clientX-startX; 
+  if(dx>80) { weekOffset--; load(); }
+  if(dx<-80) { weekOffset++; load(); }
+});
 
-// Arrow down navigation (NEW)
+// Down arrow moves down column
 document.addEventListener("keydown", function(e){
   if(e.key!=="ArrowDown") return;
   const active = document.activeElement;
   if(!active || !active.tagName.match(/INPUT/i)) return;
   e.preventDefault();
-  const td = active.closest("td");
-  const tr = active.closest("tr");
-  const col = td.cellIndex;
-  const nextRow = tr.nextElementSibling;
-  if(nextRow){
-    const nextInput = nextRow.cells[col]?.querySelector("input");
-    if(nextInput) nextInput.focus();
+  const col = parseInt(active.dataset.d);
+  const allInputs = Array.from(document.querySelectorAll(`input[data-d="${col}"]`));
+  const index = allInputs.indexOf(active);
+  if(index >= 0 && index < allInputs.length-1){
+    allInputs[index+1].focus();
   }
 });
 
