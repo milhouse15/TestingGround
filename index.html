@@ -367,13 +367,16 @@ document.addEventListener("touchend", e=>{
   if(dx<-80) { weekOffset++; load(); }
 });
 
-// Down arrow moves down column
+// Down arrow moves down column in ALL rows
 document.addEventListener("keydown", function(e){
-  if(e.key!=="ArrowDown") return;
+  if(e.key !== "ArrowDown") return;
   const active = document.activeElement;
-  if(!active || !active.tagName.match(/INPUT/i)) return;
+  if(!active || active.tagName !== "INPUT") return;
   e.preventDefault();
+  
   const col = parseInt(active.dataset.d);
+  if(isNaN(col)) return;
+  
   const allInputs = Array.from(document.querySelectorAll(`input[data-d="${col}"]`));
   const index = allInputs.indexOf(active);
   if(index >= 0 && index < allInputs.length-1){
