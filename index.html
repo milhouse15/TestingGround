@@ -146,6 +146,23 @@ tr:nth-child(4n+1) td, tr:nth-child(4n+2) td{
 background:rgba(255,255,255,0.015);
 }
 
+/* ── Saturday toggle ── */
+.sat-col{ transition: all 0.2s; }
+.sat-hidden .sat-col{ display:none; }
+.sat-btn{
+background:var(–surface);
+border:1px solid var(–border);
+color:var(–text-muted);
+border-radius:8px;
+padding:5px 10px;
+font-size:13px;
+font-family:var(–sans);
+font-weight:500;
+cursor:pointer;
+transition:all 0.15s;
+}
+.sat-btn.active{ border-color:var(–accent); color:var(–accent); background:var(–accent-dim); }
+
 input{
 border:none;
 width:95%;
@@ -263,6 +280,7 @@ button.clock:active{ opacity:0.85; transform:scale(0.99); }
       <div class="nav-row">
         <button class="nav-btn" onclick="changeWeek(-1)">← Prev</button>
         <button class="nav-btn" onclick="changeWeek(1)">Next →</button>
+        <button class="sat-btn" id="satBtn" onclick="toggleSat()">Sat</button>
       </div>
     </div>
     <button class="export-btn" onclick="exportCSV()">Export CSV</button>
@@ -270,11 +288,11 @@ button.clock:active{ opacity:0.85; transform:scale(0.99); }
 
   <div class="container">
     <div class="slide-wrapper">
-      <table id="table">
+      <table id="table" class="sat-hidden">
         <thead>
           <tr>
             <th></th>
-            <th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th>
+            <th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th class="sat-col">Sat</th>
           </tr>
         </thead>
         <tbody id="body"></tbody>
@@ -286,7 +304,7 @@ button.clock:active{ opacity:0.85; transform:scale(0.99); }
             <td><button class="addEntry" onclick="addEntry(2)">+</button></td>
             <td><button class="addEntry" onclick="addEntry(3)">+</button></td>
             <td><button class="addEntry" onclick="addEntry(4)">+</button></td>
-            <td><button class="addEntry" onclick="addEntry(5)">+</button></td>
+            <td class="sat-col"><button class="addEntry" onclick="addEntry(5)">+</button></td>
           </tr>
           <tr>
             <td></td>
@@ -295,11 +313,12 @@ button.clock:active{ opacity:0.85; transform:scale(0.99); }
             <td class="total" id="t2"></td>
             <td class="total" id="t3"></td>
             <td class="total" id="t4"></td>
-            <td class="total" id="t5"></td>
+            <td class="total sat-col" id="t5"></td>
           </tr>
           <tr class="weekTotalRow">
-            <td colspan="5" class="week-total-label">Week Total</td>
+            <td colspan="4" class="week-total-label">Week Total</td>
             <td colspan="2" class="weekTotal" id="weekTotal"></td>
+            <td class="sat-col"></td>
           </tr>
         </tfoot>
       </table>
@@ -353,6 +372,7 @@ function buildTable(){
     let label=document.createElement("td"); label.innerText=r%2==0?"In":"Out"; tr.appendChild(label);
     for(let d=0;d<days;d++){
       let td=document.createElement("td");
+      if(d===5) td.classList.add('sat-col');
       td.appendChild(makeInput(r,d));
       tr.appendChild(td);
     }
@@ -370,6 +390,7 @@ function createDynamicPair(day,suppressSave){
   for(let d=0;d<days;d++){
     let inCell=document.createElement("td");
     let outCell=document.createElement("td");
+    if(d===5){ inCell.classList.add('sat-col'); outCell.classList.add('sat-col'); }
     if(d===day){
       inCell.appendChild(makeInput("dyn",d));
       outCell.appendChild(makeInput("dyn",d));
@@ -416,7 +437,9 @@ function parseTimeWithContext(v,prev=null){
 function formatTime(minutes){
   minutes=minutes%(24*60);
   let h=Math.floor(minutes/60),m=minutes%60;
-  return `${String(h).padStart(2,'0')}${String(m).padStart(2,'0')}`;
+  let ampm=h>=12?'p':'a';
+  h=h%12; if(h===0) h=12;
+  return `${h}:${m<10?"0":""}${m}${ampm}`;
 }
 
 function roundMinutes(minutes){ return Math.round(minutes/15)*15; }
@@ -449,11 +472,20 @@ function clockAuto(){
       if(i===inputs.length-1){ addEntry(day); }
       const now=new Date(); let minutes=Math.round((now.getHours()*60+now.getMinutes())/15)*15;
       let h=Math.floor(minutes/60),m=minutes%60;
-      inputs[i].value=`${String(h).padStart(2,'0')}${String(m).padStart(2,'0')}`;
+      const ampm=h>=12?'p':'a'; h=h%12; if(h===0) h=12;
+      inputs[i].value=`${h}:${m<10?"0":""}${m}${ampm}`;
       break;
     }
   }
   save(); calc();
+}
+
+let satVisible=false;
+function toggleSat(){
+  satVisible=!satVisible;
+  document.getElementById('table').classList.toggle('sat-hidden',!satVisible);
+  document.getElementById('satBtn').classList.toggle('active',satVisible);
+  try{ localStorage.setItem('tc_sat',satVisible?'1':'0'); }catch(e){}
 }
 
 function changeWeek(dir){ weekOffset+=dir; load(); }
@@ -499,6 +531,13 @@ function load(){
   inputs.forEach((inp,idx)=>{ if(saved[idx]!==undefined) inp.value=saved[idx]; });
   updateWeekLabel();
   calc();
+  // Restore sat visibility
+  try{
+    const sv=localStorage.getItem('tc_sat');
+    satVisible = sv==='1';
+  }catch(e){ satVisible=false; }
+  document.getElementById('table').classList.toggle('sat-hidden',!satVisible);
+  document.getElementById('satBtn').classList.toggle('active',satVisible);
 }
 
 function updateWeekLabel(){
