@@ -29,7 +29,7 @@
 body{
   font-family:var(--sans);
   margin:0;
-  background:var(--bg);
+  background:#0f0f0f;
   display:flex;
   justify-content:center;
   align-items:flex-start;
@@ -39,9 +39,9 @@ body{
 .app-frame{
   max-width:500px;
   width:96%;
-  background:var(--card);
+  background:#1a1a1a;
   border-radius:20px;
-  border:1px solid var(--border);
+  border:1px solid #444;
   box-shadow:0 24px 64px rgba(0,0,0,.7);
   display:flex;
   flex-direction:column;
@@ -50,8 +50,8 @@ body{
 
 /* ── Header ── */
 .top-bar{
-background:var(–card);
-border-bottom:1px solid var(–border);
+background:#1a1a1a;
+border-bottom:1px solid #444;
 padding:18px 18px 14px;
 display:flex;
 justify-content:space-between;
@@ -64,13 +64,13 @@ font-size:10px;
 font-weight:500;
 letter-spacing:0.15em;
 text-transform:uppercase;
-color:var(–accent);
+color:#00e5a0;
 }
 #weekLabel{
 font-family:var(–sans);
 font-size:18px;
 font-weight:700;
-color:var(–text);
+color:#e8e8e8;
 letter-spacing:-0.02em;
 }
 .nav-row{
@@ -80,9 +80,9 @@ align-items:center;
 margin-top:10px;
 }
 .nav-btn{
-background:var(–surface);
-border:1px solid var(–border);
-color:var(–text-muted);
+background:#242424;
+border:1px solid #444;
+color:#888;
 border-radius:8px;
 padding:5px 12px;
 font-size:13px;
@@ -91,11 +91,11 @@ font-weight:500;
 cursor:pointer;
 transition:all 0.15s;
 }
-.nav-btn:active{ background:var(–surface2); color:var(–text); }
+.nav-btn:active{ background:#2e2e2e; color:#f0f0f0; }
 .export-btn{
 background:transparent;
-border:1px solid var(–border);
-color:var(–text-muted);
+border:1px solid #444;
+color:#888;
 border-radius:8px;
 padding:6px 14px;
 font-size:13px;
@@ -105,7 +105,7 @@ cursor:pointer;
 transition:all 0.15s;
 white-space:nowrap;
 }
-.export-btn:active{ border-color:var(–accent); color:var(–accent); }
+.export-btn:active{ border-color:#00e5a0; color:#00e5a0; }
 
 /* ── Table ── */
 .container{
@@ -123,9 +123,9 @@ font-size:10px;
 font-weight:500;
 letter-spacing:0.1em;
 text-transform:uppercase;
-color:var(–text-muted);
+color:#d0d0d0;
 padding:6px 2px;
-border-bottom:1px solid var(–border);
+border-bottom:1px solid #444;
 text-align:center;
 }
 td{
@@ -150,9 +150,9 @@ background:rgba(255,255,255,0.015);
 .sat-col{ transition: all 0.2s; }
 .sat-hidden .sat-col{ display:none; }
 .sat-btn{
-background:var(–surface);
-border:1px solid var(–border);
-color:var(–text-muted);
+background:#242424;
+border:1px solid #444;
+color:#888;
 border-radius:8px;
 padding:5px 10px;
 font-size:13px;
@@ -161,7 +161,7 @@ font-weight:500;
 cursor:pointer;
 transition:all 0.15s;
 }
-.sat-btn.active{ border-color:var(–accent); color:var(–accent); background:var(–accent-dim); }
+.sat-btn.active{ border-color:#00e5a0; color:#00e5a0; background:rgba(0,229,160,0.12); }
 
 input{
 border:none;
@@ -173,13 +173,13 @@ font-weight:400;
 background:transparent;
 border-radius:5px;
 padding:4px 1px;
-color:var(–text);
+color:#f0f0f0;
 transition:background 0.15s;
 }
 input:focus{
-background:var(–accent-dim);
+background:rgba(0,229,160,0.12);
 outline:none;
-color:var(–accent);
+color:#00e5a0;
 }
 
 /* ── Totals ── */
@@ -187,21 +187,21 @@ color:var(–accent);
 font-family:var(–mono);
 font-size:11px;
 font-weight:500;
-color:var(–accent);
-background:var(–surface) !important;
-border-top:1px solid var(–border) !important;
+color:#00e5a0;
+background:#242424 !important;
+border-top:1px solid #444 !important;
 padding:4px 2px !important;
 }
 .bar{
 height:2px;
-background:var(–accent);
+background:#00e5a0;
 border-radius:2px;
 margin-top:3px;
 opacity:0.5;
 }
 .weekTotalRow td{
-background:var(–surface) !important;
-border-top:1px solid var(–accent) !important;
+background:#242424 !important;
+border-top:1px solid #00e5a0 !important;
 padding:10px 8px !important;
 }
 .week-total-label{
@@ -209,7 +209,7 @@ font-family:var(–mono);
 font-size:9px;
 letter-spacing:0.12em;
 text-transform:uppercase;
-color:var(–text-muted);
+color:#888;
 text-align:left;
 padding-left:8px !important;
 }
@@ -217,11 +217,11 @@ padding-left:8px !important;
 font-family:var(–mono);
 font-weight:500;
 font-size:22px;
-color:var(–accent);
+color:#00e5a0;
 text-align:right;
 padding-right:8px !important;
 }
-.weekTotal.over{ color:var(–red); }
+.weekTotal.over{ color:#ff4d4d; }
 
 /* ── Add row ── */
 .add-row td{
@@ -231,8 +231,8 @@ background:transparent !important;
 }
 button.addEntry{
 background:transparent;
-color:var(–text-dim);
-border:1px dashed var(–text-dim);
+color:#555;
+border:1px dashed #555;
 border-radius:5px;
 padding:1px 6px;
 font-size:14px;
@@ -242,17 +242,17 @@ transition:all 0.15s;
 font-family:var(–sans);
 }
 button.addEntry:active{
-border-color:var(–accent);
-color:var(–accent);
+border-color:#00e5a0;
+color:#00e5a0;
 }
 
 /* ── Clock button ── */
 .bottom-buttons{
 padding:12px 14px 16px;
-border-top:1px solid var(–border);
+border-top:1px solid #444;
 }
 button.clock{
-background:var(–accent);
+background:#00e5a0;
 color:#000;
 font-size:15px;
 font-family:var(–sans);
