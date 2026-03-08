@@ -3,109 +3,269 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Timecard Pro+</title>
 <link rel="apple-touch-icon" href="icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
+:root{
+  --bg: #0f0f0f;
+  --card: #1a1a1a;
+  --surface: #242424;
+  --surface2: #2e2e2e;
+  --border: #444;
+  --accent: #00e5a0;
+  --accent-dim: rgba(0,229,160,0.12);
+  --text: #f0f0f0;
+  --text-muted: #888;
+  --text-dim: #666;
+  --red: #ff4d4d;
+  --mono: 'Outfit', sans-serif;
+  --sans: 'Outfit', sans-serif;
+}
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 body{
-  font-family:-apple-system,BlinkMacSystemFont;
+  font-family:var(--sans);
   margin:0;
-  background:#2a2a2a;
+  background:var(--bg);
   display:flex;
   justify-content:center;
-  padding:15px 0;
+  align-items:flex-start;
+  min-height:100vh;
+  padding:16px 0 32px;
 }
 .app-frame{
-  max-width:480px;
-  width:95%;
-  background:#fdfaf0;
-  border-radius:16px;
-  border:2px solid #fff;
-  box-shadow:0 6px 18px rgba(0,0,0,.4);
+  max-width:500px;
+  width:96%;
+  background:var(--card);
+  border-radius:20px;
+  border:1px solid var(--border);
+  box-shadow:0 24px 64px rgba(0,0,0,.7);
   display:flex;
   flex-direction:column;
   overflow:hidden;
-  color:#111;
-  box-sizing:border-box;
 }
+
+/* ── Header ── */
 .top-bar{
-  background:#000;
-  color:#fff;
-  padding:16px 15px;
-  font-weight:700;
-  font-size:20px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+background:var(–card);
+border-bottom:1px solid var(–border);
+padding:18px 18px 14px;
+display:flex;
+justify-content:space-between;
+align-items:flex-start;
 }
+.top-bar-left{ display:flex; flex-direction:column; gap:3px; }
+.app-title{
+font-family:var(–mono);
+font-size:10px;
+font-weight:500;
+letter-spacing:0.15em;
+text-transform:uppercase;
+color:var(–accent);
+}
+#weekLabel{
+font-family:var(–sans);
+font-size:18px;
+font-weight:700;
+color:var(–text);
+letter-spacing:-0.02em;
+}
+.nav-row{
+display:flex;
+gap:6px;
+align-items:center;
+margin-top:10px;
+}
+.nav-btn{
+background:var(–surface);
+border:1px solid var(–border);
+color:var(–text-muted);
+border-radius:8px;
+padding:5px 12px;
+font-size:13px;
+font-family:var(–sans);
+font-weight:500;
+cursor:pointer;
+transition:all 0.15s;
+}
+.nav-btn:active{ background:var(–surface2); color:var(–text); }
+.export-btn{
+background:transparent;
+border:1px solid var(–border);
+color:var(–text-muted);
+border-radius:8px;
+padding:6px 14px;
+font-size:13px;
+font-family:var(–sans);
+font-weight:500;
+cursor:pointer;
+transition:all 0.15s;
+white-space:nowrap;
+}
+.export-btn:active{ border-color:var(–accent); color:var(–accent); }
+
+/* ── Table ── */
 .container{
-  padding:10px 15px;
-  overflow-x:auto;
+padding:12px 14px;
+overflow-x:auto;
 }
-.slide-wrapper{ transition:transform 0.3s ease-in-out; }
 table{
-  width:100%;
-  border-collapse:collapse;
-  background:#fdfaf0;
-  border-radius:12px;
-  table-layout:fixed;
+width:100%;
+border-collapse:collapse;
+table-layout:fixed;
 }
-th,td{
-  border:1px solid #ddd;
-  padding:3px 2px;
-  text-align:center;
-  color:#111;
+th{
+font-family:var(–mono);
+font-size:10px;
+font-weight:500;
+letter-spacing:0.1em;
+text-transform:uppercase;
+color:var(–text-muted);
+padding:6px 2px;
+border-bottom:1px solid var(–border);
+text-align:center;
 }
-th{ background:#f5f0e6; font-weight:600; }
+td{
+border-bottom:1px solid #333;
+padding:2px 1px;
+text-align:center;
+}
+td:first-child{
+font-family:var(–mono);
+font-size:9px;
+letter-spacing:0.08em;
+text-transform:uppercase;
+color:#666;
+width:26px;
+}
+/* Alternating row tint */
+tr:nth-child(4n+1) td, tr:nth-child(4n+2) td{
+background:rgba(255,255,255,0.015);
+}
+
 input{
-  border:none;
-  width:80%;
-  text-align:center;
-  font-size:16px;
-  background:#fff9eb;
-  border-radius:6px;
-  padding:4px 2px;
-  color:#111;
+border:none;
+width:95%;
+text-align:center;
+font-size:16px;
+font-family:var(–mono);
+font-weight:400;
+background:transparent;
+border-radius:5px;
+padding:4px 1px;
+color:var(–text);
+transition:background 0.15s;
 }
-input:focus{ background:#fff7d9; outline:none; }
-.total{ font-weight:600; background:#f5f0e6; }
-.weekTotal{ font-weight:700; font-size:20px; }
-.bar{ height:6px; background:#007aff; border-radius:4px; margin-top:3px; width:100%; }
-.bottom-buttons{ padding:12px 15px; }
-button.clock{
-  background:#34c759;
-  color:white;
-  font-size:16px;
-  border-radius:10px;
-  width:100%;
-  padding:12px;
-  border:none;
-  font-weight:600;
+input:focus{
+background:var(–accent-dim);
+outline:none;
+color:var(–accent);
 }
-button.addEntry{
-  background:#007aff;
-  color:white;
-  border:none;
-  border-radius:6px;
-  padding:2px 6px;
-  font-size:14px;
+
+/* ── Totals ── */
+.total{
+font-family:var(–mono);
+font-size:11px;
+font-weight:500;
+color:var(–accent);
+background:var(–surface) !important;
+border-top:1px solid var(–border) !important;
+padding:4px 2px !important;
+}
+.bar{
+height:2px;
+background:var(–accent);
+border-radius:2px;
+margin-top:3px;
+opacity:0.5;
 }
 .weekTotalRow td{
-  font-weight:700;
-  background:#e2dac6;
-  border-top:2px solid #ccc;
-  padding:6px 8px;
+background:var(–surface) !important;
+border-top:1px solid var(–accent) !important;
+padding:10px 8px !important;
 }
+.week-total-label{
+font-family:var(–mono);
+font-size:9px;
+letter-spacing:0.12em;
+text-transform:uppercase;
+color:var(–text-muted);
+text-align:left;
+padding-left:8px !important;
+}
+.weekTotal{
+font-family:var(–mono);
+font-weight:500;
+font-size:22px;
+color:var(–accent);
+text-align:right;
+padding-right:8px !important;
+}
+.weekTotal.over{ color:var(–red); }
+
+/* ── Add row ── */
+.add-row td{
+padding:4px 2px !important;
+border-bottom:none !important;
+background:transparent !important;
+}
+button.addEntry{
+background:transparent;
+color:var(–text-dim);
+border:1px dashed var(–text-dim);
+border-radius:5px;
+padding:1px 6px;
+font-size:14px;
+cursor:pointer;
+line-height:1.4;
+transition:all 0.15s;
+font-family:var(–sans);
+}
+button.addEntry:active{
+border-color:var(–accent);
+color:var(–accent);
+}
+
+/* ── Clock button ── */
+.bottom-buttons{
+padding:12px 14px 16px;
+border-top:1px solid var(–border);
+}
+button.clock{
+background:var(–accent);
+color:#000;
+font-size:15px;
+font-family:var(–sans);
+font-weight:700;
+letter-spacing:0.02em;
+border-radius:12px;
+width:100%;
+padding:14px;
+border:none;
+cursor:pointer;
+transition:opacity 0.15s, transform 0.1s;
+}
+button.clock:active{ opacity:0.85; transform:scale(0.99); }
 </style>
+
 </head>
 <body>
 
 <div class="app-frame">
 
   <div class="top-bar">
-    <div id="weekLabel">Timecard: Week of --/--/----</div>
-    <button onclick="exportCSV()">Export CSV</button>
+    <div class="top-bar-left">
+      <div class="app-title">Timecard</div>
+      <div id="weekLabel">Week of --/--/----</div>
+      <div class="nav-row">
+        <button class="nav-btn" onclick="changeWeek(-1)">← Prev</button>
+        <button class="nav-btn" onclick="changeWeek(1)">Next →</button>
+      </div>
+    </div>
+    <button class="export-btn" onclick="exportCSV()">Export CSV</button>
   </div>
 
   <div class="container">
@@ -119,7 +279,7 @@ button.addEntry{
         </thead>
         <tbody id="body"></tbody>
         <tfoot>
-          <tr>
+          <tr class="add-row">
             <td></td>
             <td><button class="addEntry" onclick="addEntry(0)">+</button></td>
             <td><button class="addEntry" onclick="addEntry(1)">+</button></td>
@@ -129,7 +289,7 @@ button.addEntry{
             <td><button class="addEntry" onclick="addEntry(5)">+</button></td>
           </tr>
           <tr>
-            <td>Total</td>
+            <td></td>
             <td class="total" id="t0"></td>
             <td class="total" id="t1"></td>
             <td class="total" id="t2"></td>
@@ -138,8 +298,8 @@ button.addEntry{
             <td class="total" id="t5"></td>
           </tr>
           <tr class="weekTotalRow">
-            <td colspan="5" style="text-align:left;padding-left:8px;">Week Total</td>
-            <td colspan="2" style="text-align:right;padding-right:8px;" class="weekTotal" id="weekTotal"></td>
+            <td colspan="5" class="week-total-label">Week Total</td>
+            <td colspan="2" class="weekTotal" id="weekTotal"></td>
           </tr>
         </tfoot>
       </table>
@@ -168,6 +328,7 @@ function makeInput(r,d){
   input.type="tel"; input.inputMode="numeric"; input.pattern="[0-9]*";
   input.enterKeyHint="next";
   input.dataset.r=r; input.dataset.d=d;
+  input.addEventListener("focus",()=>{ setTimeout(()=>input.select(),0); });
   input.addEventListener("change",()=>{save();calc();});
   input.addEventListener("blur",()=>{autoFormat(input);});
   input.addEventListener("keydown",(e)=>{
@@ -204,10 +365,8 @@ function createDynamicPair(day,suppressSave){
   const inRow=document.createElement("tr");
   const outRow=document.createElement("tr");
   inRow.dataset.dynamic=day; outRow.dataset.dynamic=day;
-
   const inLabel=document.createElement("td"); inLabel.innerText="In"; inRow.appendChild(inLabel);
   const outLabel=document.createElement("td"); outLabel.innerText="Out"; outRow.appendChild(outLabel);
-
   for(let d=0;d<days;d++){
     let inCell=document.createElement("td");
     let outCell=document.createElement("td");
@@ -257,9 +416,7 @@ function parseTimeWithContext(v,prev=null){
 function formatTime(minutes){
   minutes=minutes%(24*60);
   let h=Math.floor(minutes/60),m=minutes%60;
-  let ampm=h>=12?"PM":"AM";
-  h=h%12; if(h===0) h=12;
-  return `${h}:${m<10?"0":""}${m} ${ampm}`;
+  return `${String(h).padStart(2,'0')}${String(m).padStart(2,'0')}`;
 }
 
 function roundMinutes(minutes){ return Math.round(minutes/15)*15; }
@@ -275,10 +432,13 @@ function calc(){
       if(t1!=null&&t2!=null) total+=t2-t1;
     }
     let hrs=total/60; week+=hrs;
-    document.getElementById("t"+d).innerHTML=hrs.toFixed(2)+"<div class='bar' style='width:"+Math.min(hrs/12*100,100)+"%'></div>";
+    document.getElementById("t"+d).innerHTML=hrs>0
+      ? hrs.toFixed(2)+"<div class='bar' style='width:"+Math.min(hrs/12*100,100)+"%'></div>"
+      : "";
   }
-  document.getElementById("weekTotal").innerText=week.toFixed(2);
-  document.getElementById("weekTotal").style.color=week>40?"red":"black";
+  const wEl=document.getElementById("weekTotal");
+  wEl.innerText=week>0?week.toFixed(2)+"h":"—";
+  wEl.className="weekTotal"+(week>40?" over":"");
 }
 
 function clockAuto(){
@@ -288,13 +448,15 @@ function clockAuto(){
     if(!inputs[i].value){
       if(i===inputs.length-1){ addEntry(day); }
       const now=new Date(); let minutes=Math.round((now.getHours()*60+now.getMinutes())/15)*15;
-      let h=Math.floor(minutes/60),m=minutes%60; const ampm=h>=12?"PM":"AM";
-      h=h%12; if(h===0) h=12; inputs[i].value=`${h}:${m<10?"0":""}${m} ${ampm}`;
+      let h=Math.floor(minutes/60),m=minutes%60;
+      inputs[i].value=`${String(h).padStart(2,'0')}${String(m).padStart(2,'0')}`;
       break;
     }
   }
   save(); calc();
 }
+
+function changeWeek(dir){ weekOffset+=dir; load(); }
 
 function weekKey(){
   let d=new Date();
@@ -306,11 +468,9 @@ function getAllData(){
   try{ const r=localStorage.getItem('tc_alldata'); if(r) return JSON.parse(r); }catch(e){}
   return {};
 }
-
 function setAllData(d){
   try{ localStorage.setItem('tc_alldata',JSON.stringify(d)); }catch(e){}
 }
-
 function save(){
   const allData=getAllData();
   const key=weekKey();
@@ -325,7 +485,6 @@ function load(){
   buildTable();
   const allData=getAllData();
   const key=weekKey();
-
   const savedCounts=allData[key+'_structure']||null;
   if(savedCounts){
     dynamicCounts[key]=savedCounts;
@@ -335,11 +494,9 @@ function load(){
   } else {
     dynamicCounts[key]=Array(days).fill(0);
   }
-
   const saved=allData[key]||[];
   const inputs=document.querySelectorAll("input");
   inputs.forEach((inp,idx)=>{ if(saved[idx]!==undefined) inp.value=saved[idx]; });
-
   updateWeekLabel();
   calc();
 }
@@ -347,7 +504,8 @@ function load(){
 function updateWeekLabel(){
   let d=new Date();
   d.setDate(d.getDate()-(d.getDay()+6)%7+weekOffset*7);
-  document.getElementById("weekLabel").innerText=`Timecard: Week of ${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}/${d.getFullYear()}`;
+  const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  document.getElementById("weekLabel").innerText=`${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
 }
 
 function exportCSV(){
