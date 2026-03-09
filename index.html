@@ -286,6 +286,12 @@ button.clock:active{ opacity:0.85; transform:scale(0.99); }
     <button class="export-btn" onclick="exportCSV()">Export CSV</button>
   </div>
 
+  <div id="diagBar" style="background:#1f1f1f;border-bottom:1px solid #333;padding:5px 18px;font-size:10px;font-family:monospace;color:#666;display:flex;justify-content:space-between;gap:8px;">
+    <span id="diagSaved">Last saved: —</span>
+    <span id="diagEntries">Entries: —</span>
+    <span id="diagOrigin" style="color:#444;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px;"></span>
+  </div>
+
   <div class="container">
     <div class="slide-wrapper">
       <table id="table" class="sat-hidden">
@@ -496,6 +502,17 @@ function weekKey(){
   return "week_"+d.toISOString().slice(0,10);
 }
 
+function updateDiag(entryCount){
+  try{
+    const now=new Date();
+    const h=now.getHours(),m=now.getMinutes(),s=now.getSeconds();
+    const pad=n=>String(n).padStart(2,'0');
+    document.getElementById('diagSaved').textContent=`Saved: ${pad(h)}:${pad(m)}:${pad(s)}`;
+    document.getElementById('diagEntries').textContent=`Entries: ${entryCount}`;
+    document.getElementById('diagOrigin').textContent=window.location.origin+window.location.pathname;
+  }catch(e){}
+}
+
 function getAllData(){
   try{ const r=localStorage.getItem('tc_alldata'); if(r) return JSON.parse(r); }catch(e){}
   return {};
@@ -511,6 +528,7 @@ function save(){
   document.querySelectorAll("input").forEach(i=>data.push(i.value));
   allData[key]=data;
   setAllData(allData);
+  updateDiag(data.filter(v=>v).length);
 }
 
 function load(){
@@ -531,6 +549,17 @@ function load(){
   inputs.forEach((inp,idx)=>{ if(saved[idx]!==undefined) inp.value=saved[idx]; });
   updateWeekLabel();
   calc();
+  // Show load diagnostics
+  try{
+    const now=new Date();
+    const h=now.getHours(),m=now.getMinutes(),s=now.getSeconds();
+    const pad=n=>String(n).padStart(2,'0');
+    const entryCount=saved.filter(v=>v).length;
+    document.getElementById('diagSaved').textContent=entryCount>0?`Loaded: ${pad(h)}:${pad(m)}:${pad(s)}`:`No data found`;
+    document.getElementById('diagSaved').style.color=entryCount>0?'#00e5a0':'#ff4d4d';
+    document.getElementById('diagEntries').textContent=`Entries: ${entryCount}`;
+    document.getElementById('diagOrigin').textContent=window.location.origin+window.location.pathname;
+  }catch(e){}
   // Restore sat visibility
   try{
     const sv=localStorage.getItem('tc_sat');
